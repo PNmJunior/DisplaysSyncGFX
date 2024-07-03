@@ -31,13 +31,45 @@ POSSIBILITY OF SUCH DAMAGE.
 #define DISPLAYSSYNCGFX_H
 
 #include <Adafruit_GFX.h>
+#include <vector>
+
+// Definice typu pro getColorFunction
+typedef uint16_t (*GetColorFunction)(int16_t, int16_t);
+
+typedef void (*InputRe_renderingFunction)();
+
+enum Mode {
+    pixelUpgrade,//Podle Primarníh
+    re_rendering
+};
 
 class DisplaysSyncGFX: public Adafruit_GFX {
 public:
 
+    // Inicializace s režimem fungování
+    void begin(Mode mode);
+
+    // Přidání primárního displeje
+    void addPrimary(Adafruit_GFX *gfx, GetColorFunction getColor);
+
+    // Přidání dalšího sekundárního displeje
+    void add(Adafruit_GFX *gfx);
+
+    // Nastavení re_rendering funkce. V režimu re_rendering je funkce použivana.
+    void setRe_rendering(InputRe_renderingFunction re_renderingFunction);
+
+    // postupné vykreslení podle primarního displeje. V režimu pixelUpgrade je funkce použivana.
+    void updateDisplay(Adafruit_GFX *gfx);
 
 
 private:
+
+    Adafruit_GFX *primaryDisplay = NULL;
+    GetColorFunction colorFunction = NULL;
+    InputRe_renderingFunction re_renderingFunction = NULL;
+    std::vector<Adafruit_GFX*> displays;
+    Mode currentMode = pixelUpgrade;
+
 
 
 };

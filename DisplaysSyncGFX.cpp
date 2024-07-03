@@ -28,3 +28,43 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "DisplaysSyncGFX.h"
 
 
+void DisplaysSyncGFX::begin(Mode mode) {
+    currentMode = mode;
+}
+
+void DisplaysSyncGFX::addPrimary(Adafruit_GFX *gfx, GetColorFunction getColor) {
+    primaryDisplay = gfx;
+    colorFunction = getColor;
+}
+
+void DisplaysSyncGFX::add(Adafruit_GFX *gfx) {
+    if (currentMode == pixelUpgrade) {
+        
+        updateDisplay(gfx);
+        
+    }
+    displays.push_back(gfx);
+    if (currentMode == re_rendering) {
+        if (re_renderingFunction) {
+            re_renderingFunction();
+        }
+    }
+}
+
+void DisplaysSyncGFX::setRe_rendering(InputRe_renderingFunction re_renderingFunction) {
+    this->re_renderingFunction = re_renderingFunction;
+}
+
+void DisplaysSyncGFX::updateDisplay(Adafruit_GFX *display) {
+    if (primaryDisplay && colorFunction) 
+    {
+        for (int16_t y = 0; y < primaryDisplay->height(); y++) 
+        {
+            for (int16_t x = 0; x < primaryDisplay->width(); x++) 
+            {
+                uint16_t color = colorFunction(x, y);
+                //display->drawPixel(x, y, color);
+            }
+        }
+    }
+}
