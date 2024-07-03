@@ -63,8 +63,156 @@ void DisplaysSyncGFX::updateDisplay(Adafruit_GFX *display) {
             for (int16_t x = 0; x < primaryDisplay->width(); x++) 
             {
                 uint16_t color = colorFunction(x, y);
-                //display->drawPixel(x, y, color);
+                display->drawPixel(x, y, color);
             }
         }
+    }
+}
+
+void DisplaysSyncGFX::startWrite(void) {
+    if (primaryDisplay) {
+        primaryDisplay->startWrite();
+    }
+    for (auto &display : displays) {
+        display->startWrite();
+    }
+}
+
+void DisplaysSyncGFX::writePixel(int16_t x, int16_t y, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->writePixel(x, y, color);
+    }
+    for (auto &display : displays) {
+        display->writePixel(x, y, color);
+    }
+}
+
+
+void DisplaysSyncGFX::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->writeFillRect(x, y, w, h, color);
+    }
+    for (auto &display : displays) {
+        display->writeFillRect(x, y, w, h, color);
+    }
+}
+
+
+void DisplaysSyncGFX::writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->writeFastVLine(x, y, h, color);
+    }
+    for (auto &display : displays) {
+        display->writeFastVLine(x, y, h, color);
+    }
+}
+
+void DisplaysSyncGFX::writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->writeFastHLine(x, y, w, color);
+    }
+    for (auto &display : displays) {
+        display->writeFastHLine(x, y, w, color);
+    }
+}
+
+void DisplaysSyncGFX::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->writeLine(x0, y0, x1, y1, color);
+    }
+    for (auto &display : displays) {
+        display->writeLine(x0, y0, x1, y1, color);
+    }
+}
+
+
+void DisplaysSyncGFX::endWrite(void) {
+    if (primaryDisplay) {
+        primaryDisplay->endWrite();
+    }
+    for (auto &display : displays) {
+        display->endWrite();
+    }
+}
+
+
+void DisplaysSyncGFX::setRotation(uint8_t r) {
+    if (primaryDisplay) {
+        primaryDisplay->setRotation(r);
+    }
+    for (auto &display : displays) {
+        display->setRotation(r);
+    }
+}
+
+void DisplaysSyncGFX::invertDisplay(bool i) {
+    if (primaryDisplay) {
+        primaryDisplay->invertDisplay(i);
+    }
+    for (auto &display : displays) {
+        display->invertDisplay(i);
+    }
+}
+
+void DisplaysSyncGFX::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->drawFastVLine(x, y, h, color);
+    }
+    for (auto &display : displays) {
+        display->drawFastVLine(x, y, h, color);
+    }
+}
+
+void DisplaysSyncGFX::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->drawFastHLine(x, y, w, color);
+    }
+    for (auto &display : displays) {
+        display->drawFastHLine(x, y, w, color);
+    }
+}
+
+void DisplaysSyncGFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->fillRect(x, y, w, h, color);
+    }
+    for (auto &display : displays) {
+        display->fillRect(x, y, w, h, color);
+    }
+}
+
+void DisplaysSyncGFX::fillScreen(uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->fillScreen(color);
+    }
+    for (auto &display : displays) {
+        display->fillScreen(color);
+    }
+}
+
+void DisplaysSyncGFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->drawLine(x0, y0, x1, y1, color);
+    }
+    for (auto &display : displays) {
+        display->drawLine(x0, y0, x1, y1, color);
+    }
+}
+
+void DisplaysSyncGFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->drawRect(x, y, w, h, color);
+    }
+    for (auto &display : displays) {
+        display->drawRect(x, y, w, h, color);
+    }
+}
+
+void DisplaysSyncGFX::drawPixel(int16_t x, int16_t y, uint16_t color) {
+    if (primaryDisplay) {
+        primaryDisplay->drawPixel(x, y, color);
+    }
+    for (auto &display : displays) {
+        display->drawPixel(x, y, color);
     }
 }
