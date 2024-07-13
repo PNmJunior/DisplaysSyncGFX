@@ -38,6 +38,8 @@ typedef uint16_t (*GetColorFunction)(int16_t, int16_t);
 
 typedef void (*InputRe_renderingFunction)();
 
+typedef std::vector<Adafruit_GFX*> ListDispleySecund;
+
 enum Mode {
     pixelUpgrade,//Podle Primarníh
     re_rendering
@@ -46,21 +48,31 @@ enum Mode {
 class DisplaysSyncGFX: public Adafruit_GFX {
 public:
 
+
+    DisplaysSyncGFX(Adafruit_GFX *gfx, GetColorFunction getColor);
+
+    DisplaysSyncGFX(Adafruit_GFX *gfx, InputRe_renderingFunction re_renderingFunction);
+
+
+    DisplaysSyncGFX(Adafruit_GFX *gfx, InputRe_renderingFunction re_renderingFunction, GetColorFunction getColor, Mode mode);
     // Inicializace s režimem fungování
-    void begin(Mode mode);
+    ListDispleySecund displaysSecund;
 
     // Přidání primárního displeje
-    void addPrimary(Adafruit_GFX *gfx, GetColorFunction getColor);
+    void setModePixelUpgrate( GetColorFunction getColor);
+    void setModePixelUpgrate();
 
     // Přidání dalšího sekundárního displeje
-    void add(Adafruit_GFX *gfx);
+    void addDisp(Adafruit_GFX *gfx);
+
+    void upgradeView(ListDispleySecund &list);
+    void upgradeView();
 
     // Nastavení re_rendering funkce. V režimu re_rendering je funkce použivana.
-    void setRe_rendering(InputRe_renderingFunction re_renderingFunction);
+    void setModeRe_rendering(InputRe_renderingFunction re_renderingFunction);
+    void setModeRe_rendering();
 
-    // postupné vykreslení podle primarního displeje. V režimu pixelUpgrade je funkce použivana.
-    void updateDisplay(Adafruit_GFX *gfx);
-
+    ~DisplaysSyncGFX();
     
     // Základní grafické funkce
     
@@ -75,7 +87,7 @@ public:
     */
     /**********************************************************************/
     
-    void drawPixel(int16_t x, int16_t y, uint16_t color) = 0;
+    void drawPixel(int16_t x, int16_t y, uint16_t color);
 
     // TRANSACTION API / CORE DRAW API
     // These MAY be overridden by the subclass to provide device-specific
@@ -113,15 +125,22 @@ public:
                         uint16_t color);
 
 
-private:
+    
+    
 
+private:
     Adafruit_GFX *primaryDisplay = NULL;
     GetColorFunction colorFunction = NULL;
     InputRe_renderingFunction re_renderingFunction = NULL;
-    std::vector<Adafruit_GFX*> displays;
+
     Mode currentMode = pixelUpgrade;
+    bool init = false;
+    void setMode(Mode mode);
 
 
+        // postupné vykreslení podle primarního displeje. V režimu pixelUpgrade je funkce použivana.
+    void updateDisplayPixelUpgrade(ListDispleySecund &list);
+    void updateDisplayRe_rendering();
 
 };
 
