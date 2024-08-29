@@ -48,6 +48,7 @@ enum Mode {
 class DisplaysSyncGFX: public Adafruit_GFX {
 public:
 
+    DisplaysSyncGFX(GFXcanvas16 *gfxCan16);
 
     DisplaysSyncGFX(Adafruit_GFX *gfx, GetColorFunction getColor);
 
@@ -132,6 +133,7 @@ private:
     Adafruit_GFX *primaryDisplay = NULL;
     GetColorFunction colorFunction = NULL;
     InputRe_renderingFunction re_renderingFunction = NULL;
+    GFXcanvas16 *GFXc16;
 
     Mode currentMode = pixelUpgrade;
     bool init = false;
@@ -141,6 +143,8 @@ private:
         // postupné vykreslení podle primarního displeje. V režimu pixelUpgrade je funkce použivana.
     void updateDisplayPixelUpgrade(ListDispleySecund &list);
     void updateDisplayRe_rendering();
+
+    uint16_t getColorCanvas16(int16_t x, int16_t y);
 
 };
 

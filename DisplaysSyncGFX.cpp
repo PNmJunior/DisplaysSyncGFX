@@ -34,9 +34,14 @@ void DisplaysSyncGFX::setMode(Mode mode)
     currentMode = mode;   
 }
 
+DisplaysSyncGFX::DisplaysSyncGFX(GFXcanvas16 *gfxCan16)
+{
+    primaryDisplay = gfxCan16;
+    GFXc16 = gfxCan16;
+    setModePixelUpgrate(getColorCanvas16);
+}
 
-DisplaysSyncGFX::DisplaysSyncGFX(Adafruit_GFX *gfx, GetColorFunction getColor):
-    Adafruit_GFX(gfx->width(),gfx->height())
+DisplaysSyncGFX::DisplaysSyncGFX(Adafruit_GFX *gfx, GetColorFunction getColor) : Adafruit_GFX(gfx->width(), gfx->height())
 {
     primaryDisplay = gfx;   
     setModePixelUpgrate(getColor);
@@ -135,6 +140,11 @@ void DisplaysSyncGFX::updateDisplayRe_rendering()
     if (re_renderingFunction) {
         re_renderingFunction();
     }
+}
+
+uint16_t DisplaysSyncGFX::getColorCanvas16(int16_t x, int16_t y)
+{
+    return GFXc16->getPixel(x,y);
 }
 
 void DisplaysSyncGFX::startWrite(void) 
