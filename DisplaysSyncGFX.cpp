@@ -34,33 +34,12 @@ void DisplaysSyncGFX::setMode(Mode mode)
     currentMode = mode;   
 }
 
-DisplaysSyncGFX::DisplaysSyncGFX(GFXcanvas16 *gfxCan16)
+DisplaysSyncGFX::DisplaysSyncGFX(int x, int y):
+Adafruit_GFX(x,y)
 {
-    primaryDisplay = gfxCan16;
-    GFXc16 = gfxCan16;
-    setModePixelUpgrate(getColorCanvas16);
-}
-
-DisplaysSyncGFX::DisplaysSyncGFX(Adafruit_GFX *gfx, GetColorFunction getColor) : Adafruit_GFX(gfx->width(), gfx->height())
-{
-    primaryDisplay = gfx;   
-    setModePixelUpgrate(getColor);
-}
-
-DisplaysSyncGFX::DisplaysSyncGFX(Adafruit_GFX *gfx, InputRe_renderingFunction re_renderingFunction):
-    Adafruit_GFX(gfx->width(),gfx->height())
-{
-    primaryDisplay = gfx;
-    setModeRe_rendering(re_renderingFunction);
-}
-
-DisplaysSyncGFX::DisplaysSyncGFX(Adafruit_GFX *gfx, InputRe_renderingFunction re_renderingFunction, GetColorFunction getColor, Mode mode):
-    Adafruit_GFX(gfx->width(),gfx->height())
-{
-    primaryDisplay = gfx;
-    setModeRe_rendering(re_renderingFunction);    
-    setModePixelUpgrate(getColor);
-    setMode(mode);
+    sx=x;
+    sy=y;
+    setMode(re_rendering);
 }
 
 void DisplaysSyncGFX::setModePixelUpgrate(GetColorFunction getColor)
@@ -81,6 +60,28 @@ void DisplaysSyncGFX::addDisp(Adafruit_GFX *gfx) {
     upgradeView(newDisp);
     newDisp.clear();
 }
+
+bool DisplaysSyncGFX::findDisp(Adafruit_GFX *gfx)
+{
+    return std::find(displaysSecund.begin(),displaysSecund.end(),gfx) != displaysSecund.end();
+}
+
+bool DisplaysSyncGFX::deleteDisp(Adafruit_GFX *gfx)
+{
+    auto it = find(displaysSecund.begin(),displaysSecund.end(),gfx);
+    if(it != displaysSecund.end())
+    {
+        displaysSecund.erase(it);
+        return true;
+    }
+    return false;
+}
+
+int DisplaysSyncGFX::sizeDisp()
+{
+    return displaysSecund.size();
+}
+
 
 void DisplaysSyncGFX::upgradeView(ListDispleySecund  &list)
 {
@@ -106,7 +107,6 @@ void DisplaysSyncGFX::setModeRe_rendering(InputRe_renderingFunction re_rendering
 void DisplaysSyncGFX::setModeRe_rendering()
 {
     setMode(re_rendering);
-
 }
 
 DisplaysSyncGFX::~DisplaysSyncGFX()
@@ -115,11 +115,11 @@ DisplaysSyncGFX::~DisplaysSyncGFX()
 }
 
 void DisplaysSyncGFX::updateDisplayPixelUpgrade(ListDispleySecund &list) {
-    if (primaryDisplay && colorFunction) 
+    if (colorFunction) 
     {
-        for (int16_t y = 0; y < primaryDisplay->height(); y++) 
+        for (int16_t y = 0; y < sy; y++) 
         {
-            for (int16_t x = 0; x < primaryDisplay->width(); x++) 
+            for (int16_t x = 0; x < sx; x++) 
             {
                 uint16_t color = colorFunction(x, y);
 
@@ -142,155 +142,117 @@ void DisplaysSyncGFX::updateDisplayRe_rendering()
     }
 }
 
-uint16_t DisplaysSyncGFX::getColorCanvas16(int16_t x, int16_t y)
-{
-    return GFXc16->getPixel(x,y);
-}
-
 void DisplaysSyncGFX::startWrite(void) 
 {
-    if (primaryDisplay) {
-        primaryDisplay->startWrite();
-    }
     for (auto &display : displaysSecund) {
         display->startWrite();
     }
 }
 
-void DisplaysSyncGFX::writePixel(int16_t x, int16_t y, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->writePixel(x, y, color);
-    }
+void DisplaysSyncGFX::writePixel(int16_t x, int16_t y, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->writePixel(x, y, color);
     }
 }
 
 
-void DisplaysSyncGFX::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->writeFillRect(x, y, w, h, color);
-    }
+void DisplaysSyncGFX::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->writeFillRect(x, y, w, h, color);
     }
 }
 
 
-void DisplaysSyncGFX::writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->writeFastVLine(x, y, h, color);
-    }
+void DisplaysSyncGFX::writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->writeFastVLine(x, y, h, color);
     }
 }
 
-void DisplaysSyncGFX::writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->writeFastHLine(x, y, w, color);
-    }
+void DisplaysSyncGFX::writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->writeFastHLine(x, y, w, color);
     }
 }
 
-void DisplaysSyncGFX::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->writeLine(x0, y0, x1, y1, color);
-    }
+void DisplaysSyncGFX::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->writeLine(x0, y0, x1, y1, color);
     }
 }
 
 
-void DisplaysSyncGFX::endWrite(void) {
-    if (primaryDisplay) {
-        primaryDisplay->endWrite();
-    }
+void DisplaysSyncGFX::endWrite(void)
+{
     for (auto &display : displaysSecund) {
         display->endWrite();
     }
 }
 
 
-void DisplaysSyncGFX::setRotation(uint8_t r) {
-    if (primaryDisplay) {
-        primaryDisplay->setRotation(r);
-    }
+void DisplaysSyncGFX::setRotation(uint8_t r)
+{
     for (auto &display : displaysSecund) {
         display->setRotation(r);
     }
 }
 
-void DisplaysSyncGFX::invertDisplay(bool i) {
-    if (primaryDisplay) {
-        primaryDisplay->invertDisplay(i);
-    }
+void DisplaysSyncGFX::invertDisplay(bool i) 
+{
     for (auto &display : displaysSecund) {
         display->invertDisplay(i);
     }
 }
 
-void DisplaysSyncGFX::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->drawFastVLine(x, y, h, color);
-    }
+void DisplaysSyncGFX::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->drawFastVLine(x, y, h, color);
     }
 }
 
-void DisplaysSyncGFX::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->drawFastHLine(x, y, w, color);
-    }
+void DisplaysSyncGFX::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->drawFastHLine(x, y, w, color);
     }
 }
 
-void DisplaysSyncGFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->fillRect(x, y, w, h, color);
-    }
+void DisplaysSyncGFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->fillRect(x, y, w, h, color);
     }
 }
 
-void DisplaysSyncGFX::fillScreen(uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->fillScreen(color);
-    }
+void DisplaysSyncGFX::fillScreen(uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->fillScreen(color);
     }
 }
 
-void DisplaysSyncGFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->drawLine(x0, y0, x1, y1, color);
-    }
+void DisplaysSyncGFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->drawLine(x0, y0, x1, y1, color);
     }
 }
 
-void DisplaysSyncGFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->drawRect(x, y, w, h, color);
-    }
+void DisplaysSyncGFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->drawRect(x, y, w, h, color);
     }
 }
 
-void DisplaysSyncGFX::drawPixel(int16_t x, int16_t y, uint16_t color) {
-    if (primaryDisplay) {
-        primaryDisplay->drawPixel(x, y, color);
-    }
+void DisplaysSyncGFX::drawPixel(int16_t x, int16_t y, uint16_t color) 
+{
     for (auto &display : displaysSecund) {
         display->drawPixel(x, y, color);
     }

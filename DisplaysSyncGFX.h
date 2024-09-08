@@ -48,14 +48,7 @@ enum Mode {
 class DisplaysSyncGFX: public Adafruit_GFX {
 public:
 
-    DisplaysSyncGFX(GFXcanvas16 *gfxCan16);
-
-    DisplaysSyncGFX(Adafruit_GFX *gfx, GetColorFunction getColor);
-
-    DisplaysSyncGFX(Adafruit_GFX *gfx, InputRe_renderingFunction re_renderingFunction);
-
-
-    DisplaysSyncGFX(Adafruit_GFX *gfx, InputRe_renderingFunction re_renderingFunction, GetColorFunction getColor, Mode mode);
+    DisplaysSyncGFX(int x, int y);
     // Inicializace s režimem fungování
     ListDispleySecund displaysSecund;
 
@@ -65,6 +58,9 @@ public:
 
     // Přidání dalšího sekundárního displeje
     void addDisp(Adafruit_GFX *gfx);
+    bool findDisp(Adafruit_GFX *gfx);
+    bool deleteDisp(Adafruit_GFX *gfx);
+    int sizeDisp();
 
     void upgradeView(ListDispleySecund &list);
     void upgradeView();
@@ -72,6 +68,8 @@ public:
     // Nastavení re_rendering funkce. V režimu re_rendering je funkce použivana.
     void setModeRe_rendering(InputRe_renderingFunction re_renderingFunction);
     void setModeRe_rendering();
+
+    void setMode(Mode mode);
 
     ~DisplaysSyncGFX();
     
@@ -125,27 +123,15 @@ public:
     void drawRect(int16_t x, int16_t y, int16_t w, int16_t h,
                         uint16_t color);
 
-
-    
-    
-
 private:
-    Adafruit_GFX *primaryDisplay = NULL;
     GetColorFunction colorFunction = NULL;
     InputRe_renderingFunction re_renderingFunction = NULL;
-    GFXcanvas16 *GFXc16;
-
     Mode currentMode = pixelUpgrade;
-    bool init = false;
-    void setMode(Mode mode);
-
-
-        // postupné vykreslení podle primarního displeje. V režimu pixelUpgrade je funkce použivana.
+    // postupné vykreslení podle primarního displeje. V režimu pixelUpgrade je funkce použivana.
     void updateDisplayPixelUpgrade(ListDispleySecund &list);
     void updateDisplayRe_rendering();
 
-    uint16_t getColorCanvas16(int16_t x, int16_t y);
-
+    int sx,sy;
 };
 
 #endif // DISPLAYSSYNCGFX_H
